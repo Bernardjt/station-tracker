@@ -241,7 +241,6 @@ window.onerror = function(msg, src, line, col, err) {
       <div class="nav">
         <button data-view="station">Station</button>
         <button data-view="active">Active</button>
-        <button data-view="live">Live</button>
         <button data-view="reports">Reports</button>
         <button data-view="admin">Admin</button>
       </div>
@@ -276,18 +275,6 @@ window.onerror = function(msg, src, line, col, err) {
     <div class="live-section">
       <h3>Active at this station</h3>
       <div class="active-list" id="station-active"></div>
-    </div>
-  </div>
-
-  <div class="screen" id="view-live">
-    <div class="metric-row" id="live-metrics"></div>
-    <div class="live-section">
-      <h3>All stations</h3>
-      <div class="live-list" id="live-stations"></div>
-    </div>
-    <div class="live-section">
-      <h3>All active workers</h3>
-      <div class="live-list" id="live-workers"></div>
     </div>
   </div>
 
@@ -855,63 +842,6 @@ function renderActive() {
   }
 }
 
-function renderLive() {
-  var active = state.sessions.filter(function(s) { return !s.endTs; });
-  var todayStart = new Date().setHours(0,0,0,0);
-  var todays = state.sessions.filter(function(s) { return s.startTs >= todayStart; });
-  var todayMs = 0;
-  for (var i = 0; i < todays.length; i++) {
-    todayMs += (todays[i].endTs || now()) - todays[i].startTs;
-  }
-  var stationSet = {};
-  for (var j = 0; j < active.length; j++) stationSet[active[j].stationId] = true;
-  var stationsInUse = Object.keys(stationSet).length;
-
-  document.getElementById('live-metrics').innerHTML =
-    '<div class="metric"><div class="metric-label">Workers active</div><div class="metric-value">' + active.length + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Stations in use</div><div class="metric-value">' + stationsInUse + ' / ' + (state.stations.length || '—') + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Sessions today</div><div class="metric-value">' + todays.length + '</div></div>' +
-    '<div class="metric"><div class="metric-label">Labor hours today</div><div class="metric-value">' + (todayMs / 3600000).toFixed(1) + '</div></div>';
-
-  var stationsEl = document.getElementById('live-stations');
-  if (state.stations.length === 0) {
-    stationsEl.innerHTML = '<div class="empty">No stations configured.</div>';
-  } else {
-    var html = '';
-    for (var k = 0; k < state.stations.length; k++) {
-      var st = state.stations[k];
-      var here = activeSessionsAtStation(st.id);
-      if (here.length === 0) {
-        html += '<div class="live-item"><div class="name">' + escapeHtml(st.name) + '</div><div class="meta">idle</div></div>';
-      } else {
-        var lines = [];
-        for (var m = 0; m < here.length; m++) {
-          var s2 = here[m];
-          lines.push(escapeHtml(nameOf(state.workers, s2.workerId)) + ' → ' + escapeHtml(nameOf(state.customers, s2.customerId)) + ' (' + fmtDuration(now() - s2.startTs) + ')');
-        }
-        html += '<div class="live-item busy"><div class="name">' + escapeHtml(st.name) + ' · ' + here.length + ' active</div><div class="meta">' + lines.join('<br>') + '</div></div>';
-      }
-    }
-    stationsEl.innerHTML = html;
-  }
-
-  var workersEl = document.getElementById('live-workers');
-  if (active.length === 0) {
-    workersEl.innerHTML = '<div class="empty">No one is currently logged in.</div>';
-  } else {
-    var whtml = '';
-    for (var w = 0; w < active.length; w++) {
-      var as = active[w];
-      whtml += '<div class="live-item">' +
-        '<div class="name">' + escapeHtml(nameOf(state.workers, as.workerId)) + '</div>' +
-        '<div class="meta">' + escapeHtml(nameOf(state.stations, as.stationId)) + ' · ' + escapeHtml(nameOf(state.customers, as.customerId)) + '</div>' +
-        '<div class="meta">' + fmtDuration(now() - as.startTs) + ' elapsed</div>' +
-      '</div>';
-    }
-    workersEl.innerHTML = whtml;
-  }
-}
-
 function renderReports() {
   var weekAgo = now() - 7 * 24 * 3600 * 1000;
   var recent = state.sessions.filter(function(s) { return s.startTs >= weekAgo; });
@@ -1304,7 +1234,6 @@ document.getElementById('reset-data').addEventListener('click', function() {
 function renderCurrentView() {
   if (currentView === 'station') renderStation();
   else if (currentView === 'active') renderActive();
-  else if (currentView === 'live') renderLive();
   else if (currentView === 'reports') renderReports();
   else if (currentView === 'admin') renderAdmin();
 }
