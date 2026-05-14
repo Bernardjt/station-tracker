@@ -8,179 +8,203 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Station Tracker</title>
 <style>
-  :root {
-    --bg: #f5f5f4;
-    --surface: #ffffff;
-    --surface-2: #f0efed;
-    --border: #d6d3d1;
-    --text: #1c1917;
-    --text-secondary: #57534e;
-    --text-tertiary: #a8a29e;
-    --accent: #4f46e5;
-    --success-bg: #dcfce7;
-    --success-text: #166534;
-    --info-bg: #dbeafe;
-    --info-text: #1e40af;
-    --warning-bg: #fef3c7;
-    --warning-text: #92400e;
-    --danger-bg: #fee2e2;
-    --danger-text: #991b1b;
-    --radius: 12px;
-    --radius-sm: 8px;
+  body {
+    margin: 0; padding: 0;
+    background: #f5f5f4; color: #1c1917;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1917;
-      --surface: #292524;
-      --surface-2: #44403c;
-      --border: #44403c;
-      --text: #fafaf9;
-      --text-secondary: #d6d3d1;
-      --text-tertiary: #78716c;
-      --success-bg: #14532d;
-      --success-text: #bbf7d0;
-      --info-bg: #1e3a8a;
-      --info-text: #bfdbfe;
-      --warning-bg: #78350f;
-      --warning-text: #fde68a;
-      --danger-bg: #7f1d1d;
-      --danger-text: #fecaca;
-    }
-  }
-
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
-  body { min-height: 100vh; }
 
-  .app { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+  .app { padding: 16px; max-width: 1200px; margin: 0 auto; }
 
   button {
     font-family: inherit; font-size: 14px;
     padding: 8px 14px;
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    cursor: pointer; transition: background 0.1s;
+    background: #ffffff; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 8px;
+    cursor: pointer;
   }
-  button:active { background: var(--surface-2); }
-  button.primary { background: var(--accent); color: white; border-color: var(--accent); }
-  button.danger { color: var(--danger-text); border-color: var(--danger-text); }
+  button:active { background: #f0efed; }
+  button.primary { background: #4f46e5; color: #ffffff; border-color: #4f46e5; }
+  button.danger { color: #991b1b; border-color: #991b1b; }
 
   input, select {
     font-family: inherit; font-size: 14px;
     padding: 8px 12px;
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: #ffffff; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 8px;
     outline: none;
+    -webkit-appearance: none;
   }
-  input:focus, select:focus { border-color: var(--accent); }
+  input:focus, select:focus { border-color: #4f46e5; }
 
-  /* Top bar */
-  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--surface); border-radius: var(--radius); margin-bottom: 1rem; flex-wrap: wrap; gap: 12px; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px;
+    background: #ffffff; border-radius: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap; gap: 12px;
+  }
   .station-label { font-size: 20px; font-weight: 600; }
-  .station-label .small { font-size: 13px; color: var(--text-secondary); font-weight: 400; margin-left: 8px; }
-  .clock { font-size: 16px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .station-label .small { font-size: 13px; color: #57534e; font-weight: 400; margin-left: 8px; }
+  .clock { font-size: 16px; color: #57534e; }
   .nav { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* Station hero */
   .station-hero {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 3rem 1.5rem;
-    text-align: center; max-width: 560px; margin: 2rem auto;
+    background: #ffffff; border: 1px solid #d6d3d1;
+    border-radius: 12px; padding: 48px 24px;
+    text-align: center; max-width: 560px; margin: 32px auto;
   }
-  .station-hero .icon { font-size: 64px; margin-bottom: 1rem; }
+  .station-hero .icon { font-size: 64px; margin-bottom: 16px; }
   .station-hero .title { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
-  .station-hero .sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 1.75rem; }
-  .station-hero .input-row { display: flex; gap: 8px; justify-content: center; align-items: center; max-width: 420px; margin: 0 auto; }
+  .station-hero .sub { font-size: 15px; color: #57534e; margin-bottom: 28px; }
+  .station-hero .input-row {
+    display: flex; gap: 8px; justify-content: center; align-items: center;
+    max-width: 420px; margin: 0 auto;
+  }
   .station-hero input { flex: 1; font-size: 18px; padding: 12px 16px; }
-  .station-hint { text-align: center; font-size: 13px; color: var(--text-tertiary); margin-top: 1rem; }
-  .station-hint a { color: var(--text-secondary); cursor: pointer; text-decoration: underline; }
+  .station-hint { text-align: center; font-size: 13px; color: #a8a29e; margin-top: 16px; }
+  .station-hint a { color: #57534e; cursor: pointer; text-decoration: underline; }
 
-  /* Customer picker */
   .customer-overlay {
-    background: var(--info-bg); color: var(--info-text);
-    border-radius: var(--radius); padding: 1.25rem 1.5rem;
-    margin: 2rem auto; max-width: 700px;
+    background: #dbeafe; color: #1e40af;
+    border-radius: 12px; padding: 20px 24px;
+    margin: 32px auto; max-width: 700px;
   }
   .customer-overlay .welcome { font-size: 18px; margin-bottom: 14px; text-align: center; }
-  .customer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 12px; }
-  .customer-tile {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 1.25rem 1rem;
-    text-align: center; cursor: pointer;
-    font-size: 16px; font-weight: 500; color: var(--text);
-    transition: transform 0.05s;
+  .customer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px; margin-bottom: 12px;
   }
-  .customer-tile:active { transform: scale(0.97); }
+  .customer-tile {
+    background: #ffffff; border: 1px solid #d6d3d1;
+    border-radius: 8px; padding: 20px 16px;
+    text-align: center; cursor: pointer;
+    font-size: 16px; font-weight: 500; color: #1c1917;
+  }
 
-  /* Active list */
-  .active-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
-  .active-tile { background: var(--success-bg); color: var(--success-text); border-radius: var(--radius); padding: 14px 16px; }
+  .active-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  .active-tile {
+    background: #dcfce7; color: #166534;
+    border-radius: 12px; padding: 14px 16px;
+  }
   .active-tile .who { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-  .active-tile .what { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
-  .active-tile .elapsed { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .active-tile .what { font-size: 13px; margin-bottom: 8px; }
+  .active-tile .elapsed { font-size: 22px; font-weight: 600; }
 
-  /* Live */
-  .live-section { margin-bottom: 1rem; }
-  .live-section h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .live-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
-  .live-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; }
-  .live-item.busy { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
+  .live-section { margin-bottom: 16px; }
+  .live-section h3 {
+    font-size: 13px; font-weight: 600; color: #57534e;
+    margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .live-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .live-item {
+    background: #ffffff; border: 1px solid #d6d3d1;
+    border-radius: 8px; padding: 10px 12px; font-size: 13px;
+  }
+  .live-item.busy { background: #dcfce7; color: #166534; border-color: transparent; }
   .live-item .name { font-weight: 600; }
-  .live-item .meta { font-size: 12px; opacity: 0.85; }
+  .live-item .meta { font-size: 12px; }
 
-  /* Toast */
   .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    border-radius: var(--radius); padding: 12px 20px; font-size: 14px;
-    opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 1000;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    position: fixed; bottom: 24px; left: 50%;
+    -webkit-transform: translateX(-50%); transform: translateX(-50%);
+    background: #ffffff; border: 1px solid #d6d3d1; color: #1c1917;
+    border-radius: 12px; padding: 12px 20px; font-size: 14px;
+    opacity: 0;
+    -webkit-transition: opacity 0.2s; transition: opacity 0.2s;
+    pointer-events: none; z-index: 1000;
   }
   .toast.show { opacity: 1; }
-  .toast.success { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
-  .toast.warn { background: var(--warning-bg); color: var(--warning-text); border-color: transparent; }
-  .toast.err { background: var(--danger-bg); color: var(--danger-text); border-color: transparent; }
+  .toast.success { background: #dcfce7; color: #166534; border-color: transparent; }
+  .toast.warn { background: #fef3c7; color: #92400e; border-color: transparent; }
+  .toast.err { background: #fee2e2; color: #991b1b; border-color: transparent; }
 
-  /* Admin */
-  .admin-section { margin-bottom: 1.25rem; }
-  .admin-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+  .admin-section { margin-bottom: 20px; }
+  .admin-card {
+    background: #ffffff; border: 1px solid #d6d3d1;
+    border-radius: 12px; padding: 16px 20px;
+  }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-  .row label { font-size: 13px; color: var(--text-secondary); min-width: 90px; }
+  .row label { font-size: 13px; color: #57534e; min-width: 90px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; font-weight: 600; color: var(--text-secondary); padding: 8px 6px; border-bottom: 1px solid var(--border); }
-  td { padding: 8px 6px; border-bottom: 1px solid var(--border); }
-  .empty { color: var(--text-tertiary); font-style: italic; padding: 1rem 0; font-size: 14px; text-align: center; }
-  .help { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; }
-  h3 { font-size: 15px; font-weight: 600; margin: 0.75rem 0 0.5rem; }
-  code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  th { text-align: left; font-weight: 600; color: #57534e; padding: 8px 6px; border-bottom: 1px solid #d6d3d1; }
+  td { padding: 8px 6px; border-bottom: 1px solid #d6d3d1; }
+  .empty { color: #a8a29e; font-style: italic; padding: 16px 0; font-size: 14px; text-align: center; }
+  .help { font-size: 13px; color: #57534e; line-height: 1.6; margin-bottom: 16px; }
+  h3 { font-size: 15px; font-weight: 600; margin: 12px 0 8px; }
+  code {
+    background: #f0efed; padding: 2px 6px; border-radius: 4px;
+    font-size: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
 
-  .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1rem; }
-  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
-  .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-  .metric-value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin-bottom: 16px;
+  }
+  .metric {
+    background: #ffffff; border: 1px solid #d6d3d1;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .metric-label { font-size: 12px; color: #57534e; margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 600; }
 
   .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
   .bar-label { min-width: 140px; }
-  .bar-track { flex: 1; height: 16px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; background: var(--accent); }
-  .bar-value { min-width: 80px; text-align: right; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .bar-track { flex: 1; height: 16px; background: #f0efed; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: #4f46e5; }
+  .bar-value { min-width: 80px; text-align: right; color: #57534e; }
 
-  /* Storage warning banner */
-  .banner { background: var(--info-bg); color: var(--info-text); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; line-height: 1.5; display: none; }
-  .banner.show { display: block; }
+  .banner {
+    background: #dbeafe; color: #1e40af;
+    border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+    font-size: 13px; line-height: 1.5;
+  }
+
+  .export-output {
+    background: #f0efed; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 8px;
+    padding: 12px; margin-top: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    max-height: 300px; overflow: auto;
+    white-space: pre; word-wrap: normal;
+    -webkit-user-select: all; user-select: all;
+  }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="banner" id="storage-warning">
-    <strong>Note:</strong> Data on this tablet is saved locally in this browser. It survives reloads and reboots, but each tablet has its own data. Don't clear browser data or use private/incognito mode.
-  </div>
+<div id="error-display" style="display:none; background:#fee2e2; color:#991b1b; padding:16px; margin:16px; border-radius:8px; font-family:monospace; font-size:12px; white-space:pre-wrap; word-break:break-all;"></div>
 
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var e = document.getElementById('error-display');
+  if (e) {
+    e.style.display = 'block';
+    e.textContent = 'ERROR: ' + msg + '\nLine: ' + line + ':' + col + '\nSource: ' + (src || 'inline') + '\nStack: ' + (err && err.stack ? err.stack : 'none');
+  }
+  return false;
+};
+</script>
+
+
+<div class="app">
   <div class="topbar">
     <div class="station-label" id="station-label">Loading…</div>
     <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
@@ -215,7 +239,7 @@
     </div>
 
     <div class="station-hint">
-      <span id="hero-active-count">—</span>
+      <span id="hero-active-count"></span>
     </div>
   </div>
 
@@ -264,11 +288,9 @@
     <div class="admin-section">
       <h3>Workers (cards)</h3>
       <div class="admin-card">
-        <p class="help">Tap "Capture next card" then tap a card on the reader to auto-fill the Card ID field.</p>
         <div class="row">
           <input type="text" id="new-worker-name" placeholder="Worker name" />
           <input type="text" id="new-worker-card" placeholder="Card ID" />
-          <button id="capture-card">Capture next card</button>
           <button id="add-worker" class="primary">Add worker</button>
         </div>
         <table id="workers-table">
@@ -282,7 +304,7 @@
       <h3>Stations (processes)</h3>
       <div class="admin-card">
         <div class="row">
-          <input type="text" id="new-station-name" placeholder="e.g. Cutting, Welding, Assembly" />
+          <input type="text" id="new-station-name" placeholder="e.g. Cutting, Welding" />
           <button id="add-station" class="primary">Add station</button>
         </div>
         <table id="stations-table">
@@ -307,16 +329,41 @@
     </div>
 
     <div class="admin-section">
+      <h3>Cloud sync (Google Sheets)</h3>
+      <div class="admin-card">
+        <p class="help">Paste your Google Apps Script deployment URL below. When connected, every login/logout syncs to your sheet automatically.</p>
+        <div class="row">
+          <input type="text" id="sync-url" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1; min-width:280px;" />
+          <button id="sync-save" class="primary">Save URL</button>
+        </div>
+        <div class="row">
+          <button id="sync-test">Test connection</button>
+          <button id="sync-now">Sync all now</button>
+          <label style="margin-left:8px;"><input type="checkbox" id="sync-auto" checked /> Auto-sync on login/logout</label>
+        </div>
+        <div id="sync-status" style="font-size:13px; color:#57534e; margin-top:8px;">Not configured</div>
+      </div>
+    </div>
+
+    <div class="admin-section">
       <h3>Data</h3>
       <div class="admin-card">
-        <p class="help">Backups are JSON files. Export weekly. Import lets you restore or move data between tablets.</p>
+        <p class="help">Export shows the data on screen — tap and hold to select all, then copy. Paste into email or Files.</p>
         <div class="row">
           <button id="seed-demo">Load demo data</button>
-          <button id="export-csv">Export sessions CSV</button>
+          <button id="export-csv" class="primary">Export sessions CSV</button>
           <button id="export-backup">Export full backup</button>
           <button id="import-backup">Import backup</button>
-          <input type="file" id="import-file" accept=".json" style="display:none" />
           <button id="reset-data" class="danger">Reset everything</button>
+        </div>
+        <div id="export-output" class="export-output" style="display:none"></div>
+        <div id="import-area" style="display:none; margin-top:12px;">
+          <p class="help">Paste backup JSON below:</p>
+          <textarea id="import-text" style="width:100%; height:120px; font-family:ui-monospace, Menlo, monospace; font-size:11px; padding:8px;"></textarea>
+          <div class="row" style="margin-top:8px;">
+            <button id="import-apply" class="primary">Apply backup</button>
+            <button id="import-cancel">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -328,123 +375,254 @@
 <script>
 'use strict';
 
-// ---------- STORAGE (localStorage-based) ----------
-const STORAGE_KEY = 'stationTracker_v1';
-const STATION_KEY = 'stationTracker_thisStation';
+var STORAGE_KEY = 'stationTracker_v1';
+var STATION_KEY = 'stationTracker_thisStation';
+var SYNC_URL_KEY = 'stationTracker_syncUrl';
+var SYNC_AUTO_KEY = 'stationTracker_syncAuto';
+var SYNC_STATUS_KEY = 'stationTracker_syncStatus';
 
-let state = { workers: [], stations: [], customers: [], sessions: [] };
-let thisStationId = null;
-let currentView = 'station';
-let pendingWorkerId = null;
-let captureNextCard = false;
+var syncUrl = '';
+var syncAuto = true;
+var lastSyncIso = '';
+
+var state = { workers: [], stations: [], customers: [], sessions: [] };
+var thisStationId = null;
+var currentView = 'station';
+var pendingWorkerId = null;
 
 function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    var raw = localStorage.getItem(STORAGE_KEY);
     if (raw) state = JSON.parse(raw);
-  } catch (e) { console.error('Failed to load state', e); }
+  } catch (e) { console.error('Failed to load', e); }
   try {
-    const s = localStorage.getItem(STATION_KEY);
+    var s = localStorage.getItem(STATION_KEY);
     if (s) thisStationId = s;
+  } catch (e) {}
+  try {
+    syncUrl = localStorage.getItem(SYNC_URL_KEY) || '';
+    var auto = localStorage.getItem(SYNC_AUTO_KEY);
+    syncAuto = auto === null ? true : auto === 'true';
+    lastSyncIso = localStorage.getItem(SYNC_STATUS_KEY) || '';
   } catch (e) {}
 }
 function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  catch (e) { console.error('Failed to save', e); toast('Storage error — data may not be saved', 'err'); }
+  catch (e) { console.error('Failed to save', e); toast('Storage error', 'err'); }
 }
 function saveThisStation() {
   try { localStorage.setItem(STATION_KEY, thisStationId || ''); } catch (e) {}
 }
 
-// Check storage availability
-function checkStorage() {
+function saveSyncSettings() {
   try {
-    localStorage.setItem('_test', '1');
-    localStorage.removeItem('_test');
-    return true;
-  } catch (e) { return false; }
+    localStorage.setItem(SYNC_URL_KEY, syncUrl);
+    localStorage.setItem(SYNC_AUTO_KEY, syncAuto ? 'true' : 'false');
+  } catch (e) {}
 }
 
-// ---------- UTILS ----------
-const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-const now = () => Date.now();
-const nameOf = (arr, id) => { const x = arr.find(a => a.id === id); return x ? x.name : '—'; };
+// Convert a session record to the sync payload format (flat, with looked-up names)
+function sessionToSyncRow(s) {
+  var worker = null;
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].id === s.workerId) { worker = state.workers[i]; break; }
+  }
+  return {
+    session_id: s.id,
+    worker_name: worker ? worker.name : '',
+    card_id: worker ? worker.cardId : '',
+    station: nameOf(state.stations, s.stationId),
+    customer: nameOf(state.customers, s.customerId),
+    start_iso: new Date(s.startTs).toISOString(),
+    end_iso: s.endTs ? new Date(s.endTs).toISOString() : '',
+    duration_minutes: s.endTs ? ((s.endTs - s.startTs) / 60000).toFixed(2) : ''
+  };
+}
+
+// Send specified sessions (or all) to the cloud. silent = no toasts on success.
+function syncToCloud(sessionsToSend, silent, callback) {
+  if (!syncUrl) {
+    if (!silent) toast('No sync URL configured', 'err');
+    if (callback) callback(false);
+    return;
+  }
+  if (!sessionsToSend) sessionsToSend = state.sessions;
+  if (sessionsToSend.length === 0) {
+    if (!silent) toast('Nothing to sync', 'warn');
+    if (callback) callback(true);
+    return;
+  }
+
+  var rows = [];
+  for (var i = 0; i < sessionsToSend.length; i++) {
+    rows.push(sessionToSyncRow(sessionsToSend[i]));
+  }
+
+  var payload = { action: 'sync', sessions: rows };
+
+  // Use text/plain to avoid CORS preflight — Apps Script accepts this
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', syncUrl, true);
+  xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+  xhr.onload = function() {
+    var ok = false;
+    try {
+      var resp = JSON.parse(xhr.responseText);
+      ok = resp && resp.ok === true;
+    } catch (e) {}
+    if (ok) {
+      lastSyncIso = new Date().toISOString();
+      try { localStorage.setItem(SYNC_STATUS_KEY, lastSyncIso); } catch (e) {}
+      if (!silent) toast('Synced ' + sessionsToSend.length + ' session' + (sessionsToSend.length === 1 ? '' : 's'), 'success');
+      updateSyncStatus();
+      if (callback) callback(true);
+    } else {
+      if (!silent) toast('Sync failed: ' + (xhr.responseText || 'unknown error'), 'err');
+      if (callback) callback(false);
+    }
+  };
+  xhr.onerror = function() {
+    if (!silent) toast('Sync failed: network error', 'err');
+    if (callback) callback(false);
+  };
+  try {
+    xhr.send(JSON.stringify(payload));
+  } catch (e) {
+    if (!silent) toast('Sync failed: ' + e.message, 'err');
+    if (callback) callback(false);
+  }
+}
+
+function testSyncConnection() {
+  if (!syncUrl) { toast('Paste your URL and save it first', 'err'); return; }
+  toast('Testing connection...', 'success');
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', syncUrl, true);
+  xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+  xhr.onload = function() {
+    try {
+      var resp = JSON.parse(xhr.responseText);
+      if (resp && resp.ok) {
+        toast('Connected!', 'success');
+      } else {
+        toast('Reachable but error: ' + (resp.error || 'unknown'), 'err');
+      }
+    } catch (e) {
+      toast('Bad response: ' + xhr.responseText.slice(0, 100), 'err');
+    }
+  };
+  xhr.onerror = function() { toast('Could not reach URL', 'err'); };
+  xhr.send(JSON.stringify({ action: 'ping' }));
+}
+
+function updateSyncStatus() {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  if (!syncUrl) {
+    el.textContent = 'Not configured';
+    return;
+  }
+  if (!lastSyncIso) {
+    el.textContent = 'Configured · not yet synced';
+    return;
+  }
+  var d = new Date(lastSyncIso);
+  el.textContent = 'Last sync: ' + d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+}
+function now() { return Date.now(); }
+function nameOf(arr, id) {
+  for (var i = 0; i < arr.length; i++) { if (arr[i].id === id) return arr[i].name; }
+  return '—';
+}
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 
 function fmtClock(ms) {
-  const s = Math.floor(ms / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-  return `${m}:${String(sec).padStart(2,'0')}`;
+  var s = Math.floor(ms / 1000);
+  var h = Math.floor(s / 3600);
+  var m = Math.floor((s % 3600) / 60);
+  var sec = s % 60;
+  if (h > 0) return h + ':' + pad2(m) + ':' + pad2(sec);
+  return m + ':' + pad2(sec);
 }
 function fmtDuration(ms) {
   if (ms < 0) ms = 0;
-  const s = Math.round(ms / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m`;
-  return `${s}s`;
+  var s = Math.round(ms / 1000);
+  var h = Math.floor(s / 3600);
+  var m = Math.floor((s % 3600) / 60);
+  if (h > 0) return h + 'h ' + m + 'm';
+  if (m > 0) return m + 'm';
+  return s + 's';
 }
 function fmtDateTime(ts) {
   return new Date(ts).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function toast(msg, kind) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (kind ? ' ' + kind : '');
-  setTimeout(() => { t.className = 'toast'; }, 2500);
+  setTimeout(function() { t.className = 'toast'; }, 2500);
 }
 
 function findWorkerByCard(cardId) {
-  const c = String(cardId).trim();
+  var c = String(cardId).trim();
   if (!c) return null;
-  return state.workers.find(w => w.cardId === c) || null;
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].cardId === c) return state.workers[i];
+  }
+  return null;
 }
 function activeSessionsForWorker(workerId) {
-  return state.sessions.filter(s => s.workerId === workerId && !s.endTs);
+  return state.sessions.filter(function(s) { return s.workerId === workerId && !s.endTs; });
 }
 function activeSessionsAtStation(stationId) {
-  return state.sessions.filter(s => s.stationId === stationId && !s.endTs);
+  return state.sessions.filter(function(s) { return s.stationId === stationId && !s.endTs; });
 }
 
-// ---------- VIEW ROUTING ----------
 function setView(name) {
   currentView = name;
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
   document.getElementById('view-' + name).classList.add('active');
   if (name === 'station' && !pendingWorkerId) hideCustomerOverlay();
   renderCurrentView();
 }
-document.querySelectorAll('[data-view]').forEach(btn => {
-  btn.addEventListener('click', () => setView(btn.dataset.view));
-});
+var navButtons = document.querySelectorAll('[data-view]');
+for (var ni = 0; ni < navButtons.length; ni++) {
+  (function(btn) {
+    btn.addEventListener('click', function() { setView(btn.getAttribute('data-view')); });
+  })(navButtons[ni]);
+}
 
-// ---------- TOPBAR ----------
 function renderTopbar() {
-  const lbl = document.getElementById('station-label');
+  var lbl = document.getElementById('station-label');
   if (thisStationId) {
-    const s = state.stations.find(x => x.id === thisStationId);
-    lbl.innerHTML = s ? `${s.name}<span class="small">station tablet</span>` : `Unknown station<span class="small">configure in Admin</span>`;
+    var s = null;
+    for (var i = 0; i < state.stations.length; i++) {
+      if (state.stations[i].id === thisStationId) { s = state.stations[i]; break; }
+    }
+    lbl.innerHTML = s ? (s.name + '<span class="small">station tablet</span>') : 'Unknown station<span class="small">configure in Admin</span>';
   } else {
-    lbl.innerHTML = `Not configured<span class="small">go to Admin → This tablet</span>`;
+    lbl.innerHTML = 'Not configured<span class="small">go to Admin → This tablet</span>';
   }
   document.getElementById('clock').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// ---------- STATION VIEW ----------
 function renderStation() {
   document.getElementById('hero-station-name').textContent = thisStationId ? nameOf(state.stations, thisStationId) : '—';
 
-  const hint = document.getElementById('hero-active-count');
+  var hint = document.getElementById('hero-active-count');
   if (thisStationId) {
-    const count = activeSessionsAtStation(thisStationId).length;
+    var count = activeSessionsAtStation(thisStationId).length;
     if (count === 0) {
       hint.innerHTML = 'No one logged in here right now.';
     } else {
-      hint.innerHTML = `${count} worker${count === 1 ? '' : 's'} active at this station · <a data-view-link="active">view</a>`;
+      hint.innerHTML = count + ' worker' + (count === 1 ? '' : 's') + ' active at this station · <a data-view-link="active">view</a>';
     }
   } else {
     hint.innerHTML = '';
@@ -453,9 +631,9 @@ function renderStation() {
   if (pendingWorkerId) showCustomerOverlay();
   else hideCustomerOverlay();
 
-  setTimeout(() => {
+  setTimeout(function() {
     if (currentView !== 'station' || pendingWorkerId) return;
-    const inp = document.getElementById('card-input');
+    var inp = document.getElementById('card-input');
     if (inp) inp.focus();
   }, 100);
 }
@@ -463,15 +641,21 @@ function renderStation() {
 function showCustomerOverlay() {
   document.getElementById('station-hero').style.display = 'none';
   document.getElementById('customer-overlay').style.display = '';
-  const w = state.workers.find(x => x.id === pendingWorkerId);
+  var w = null;
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].id === pendingWorkerId) { w = state.workers[i]; break; }
+  }
   document.getElementById('welcome-name').textContent = w ? w.name : '—';
-  const grid = document.getElementById('customer-grid');
+  var grid = document.getElementById('customer-grid');
   if (state.customers.length === 0) {
     grid.innerHTML = '<div class="empty">No customers configured. Add some in Admin.</div>';
   } else {
-    grid.innerHTML = state.customers.map(c =>
-      `<div class="customer-tile" data-customer-id="${c.id}">${c.name}</div>`
-    ).join('');
+    var html = '';
+    for (var j = 0; j < state.customers.length; j++) {
+      var c = state.customers[j];
+      html += '<div class="customer-tile" data-customer-id="' + c.id + '">' + escapeHtml(c.name) + '</div>';
+    }
+    grid.innerHTML = html;
   }
 }
 function hideCustomerOverlay() {
@@ -479,31 +663,39 @@ function hideCustomerOverlay() {
   document.getElementById('station-hero').style.display = '';
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function handleCardTap() {
-  const inp = document.getElementById('card-input');
-  const cardId = inp.value.trim();
+  var inp = document.getElementById('card-input');
+  var cardId = inp.value.trim();
   inp.value = '';
   if (!cardId) return;
   if (!thisStationId) { toast('Configure this tablet in Admin first', 'err'); return; }
 
-  const worker = findWorkerByCard(cardId);
-  if (!worker) { toast(`Unknown card "${cardId}". Add it in Admin.`, 'err'); return; }
+  var worker = findWorkerByCard(cardId);
+  if (!worker) { toast('Unknown card "' + cardId + '". Add it in Admin.', 'err'); return; }
 
-  const existing = activeSessionsForWorker(worker.id);
-  const hereSession = existing.find(s => s.stationId === thisStationId);
+  var existing = activeSessionsForWorker(worker.id);
+  var hereSession = null;
+  for (var i = 0; i < existing.length; i++) {
+    if (existing[i].stationId === thisStationId) { hereSession = existing[i]; break; }
+  }
 
   if (hereSession) {
     hereSession.endTs = now();
     saveState();
-    toast(`${worker.name} logged out (${fmtDuration(hereSession.endTs - hereSession.startTs)})`, 'success');
+    toast(worker.name + ' logged out (' + fmtDuration(hereSession.endTs - hereSession.startTs) + ')', 'success');
+    if (syncAuto && syncUrl) syncToCloud([hereSession], true);
     renderAll();
     return;
   }
 
   if (existing.length > 0) {
-    const other = existing[0];
+    var other = existing[0];
     other.endTs = now();
-    toast(`${worker.name} auto-logged out of ${nameOf(state.stations, other.stationId)}`, 'warn');
+    toast(worker.name + ' auto-logged out of ' + nameOf(state.stations, other.stationId), 'warn');
   }
 
   if (state.customers.length === 0) {
@@ -518,273 +710,367 @@ function handleCardTap() {
 }
 
 document.getElementById('card-submit').addEventListener('click', handleCardTap);
-document.getElementById('card-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') handleCardTap();
+document.getElementById('card-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.keyCode === 13) handleCardTap();
 });
 
-document.getElementById('customer-grid').addEventListener('click', (e) => {
-  const tile = e.target.closest('[data-customer-id]');
-  if (!tile) return;
-  const customerId = tile.dataset.customerId;
+document.getElementById('customer-grid').addEventListener('click', function(e) {
+  var tile = e.target;
+  while (tile && tile !== this && !tile.getAttribute('data-customer-id')) tile = tile.parentNode;
+  if (!tile || tile === this) return;
+  var customerId = tile.getAttribute('data-customer-id');
   if (!pendingWorkerId || !thisStationId) return;
-  const session = {
-    id: uid(), workerId: pendingWorkerId, stationId: thisStationId,
-    customerId, startTs: now(), endTs: null
+  var session = {
+    id: uid(),
+    workerId: pendingWorkerId,
+    stationId: thisStationId,
+    customerId: customerId,
+    startTs: now(),
+    endTs: null
   };
   state.sessions.push(session);
   saveState();
-  const worker = state.workers.find(w => w.id === pendingWorkerId);
-  toast(`${worker.name} logged in to ${nameOf(state.customers, customerId)}`, 'success');
+  var worker = null;
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].id === pendingWorkerId) { worker = state.workers[i]; break; }
+  }
+  toast(worker.name + ' logged in to ' + nameOf(state.customers, customerId), 'success');
+  if (syncAuto && syncUrl) syncToCloud([session], true);
   pendingWorkerId = null;
   renderAll();
 });
 
-document.getElementById('customer-cancel').addEventListener('click', () => {
+document.getElementById('customer-cancel').addEventListener('click', function() {
   pendingWorkerId = null;
   renderStation();
 });
 
-// View-link clicks (station hint)
-document.addEventListener('click', (e) => {
-  if (e.target.dataset.viewLink) setView(e.target.dataset.viewLink);
+document.addEventListener('click', function(e) {
+  if (e.target.getAttribute && e.target.getAttribute('data-view-link')) {
+    setView(e.target.getAttribute('data-view-link'));
+  }
 });
 
-// ---------- ACTIVE VIEW ----------
 function renderActive() {
-  const listEl = document.getElementById('station-active');
+  var listEl = document.getElementById('station-active');
   if (!thisStationId) {
     listEl.innerHTML = '<div class="empty">Configure this tablet in Admin first.</div>';
     return;
   }
-  const active = activeSessionsAtStation(thisStationId);
+  var active = activeSessionsAtStation(thisStationId);
   if (active.length === 0) {
     listEl.innerHTML = '<div class="empty">No one is logged in here yet.</div>';
   } else {
-    listEl.innerHTML = active.map(s => `
-      <div class="active-tile">
-        <div class="who">${nameOf(state.workers, s.workerId)}</div>
-        <div class="what">on ${nameOf(state.customers, s.customerId)}</div>
-        <div class="elapsed" data-elapsed-for="${s.id}">${fmtClock(now() - s.startTs)}</div>
-      </div>
-    `).join('');
+    var html = '';
+    for (var i = 0; i < active.length; i++) {
+      var s = active[i];
+      html += '<div class="active-tile">' +
+        '<div class="who">' + escapeHtml(nameOf(state.workers, s.workerId)) + '</div>' +
+        '<div class="what">on ' + escapeHtml(nameOf(state.customers, s.customerId)) + '</div>' +
+        '<div class="elapsed" data-elapsed-for="' + s.id + '">' + fmtClock(now() - s.startTs) + '</div>' +
+      '</div>';
+    }
+    listEl.innerHTML = html;
   }
 }
 
-// ---------- LIVE ----------
 function renderLive() {
-  const active = state.sessions.filter(s => !s.endTs);
-  const todayStart = new Date().setHours(0,0,0,0);
-  const todays = state.sessions.filter(s => s.startTs >= todayStart);
-  const todayMs = todays.reduce((sum, s) => sum + ((s.endTs || now()) - s.startTs), 0);
-  const stationsInUse = new Set(active.map(s => s.stationId)).size;
+  var active = state.sessions.filter(function(s) { return !s.endTs; });
+  var todayStart = new Date().setHours(0,0,0,0);
+  var todays = state.sessions.filter(function(s) { return s.startTs >= todayStart; });
+  var todayMs = 0;
+  for (var i = 0; i < todays.length; i++) {
+    todayMs += (todays[i].endTs || now()) - todays[i].startTs;
+  }
+  var stationSet = {};
+  for (var j = 0; j < active.length; j++) stationSet[active[j].stationId] = true;
+  var stationsInUse = Object.keys(stationSet).length;
 
-  document.getElementById('live-metrics').innerHTML = `
-    <div class="metric"><div class="metric-label">Workers active</div><div class="metric-value">${active.length}</div></div>
-    <div class="metric"><div class="metric-label">Stations in use</div><div class="metric-value">${stationsInUse} / ${state.stations.length || '—'}</div></div>
-    <div class="metric"><div class="metric-label">Sessions today</div><div class="metric-value">${todays.length}</div></div>
-    <div class="metric"><div class="metric-label">Labor hours today</div><div class="metric-value">${(todayMs / 3600000).toFixed(1)}</div></div>
-  `;
+  document.getElementById('live-metrics').innerHTML =
+    '<div class="metric"><div class="metric-label">Workers active</div><div class="metric-value">' + active.length + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Stations in use</div><div class="metric-value">' + stationsInUse + ' / ' + (state.stations.length || '—') + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Sessions today</div><div class="metric-value">' + todays.length + '</div></div>' +
+    '<div class="metric"><div class="metric-label">Labor hours today</div><div class="metric-value">' + (todayMs / 3600000).toFixed(1) + '</div></div>';
 
-  const stationsEl = document.getElementById('live-stations');
+  var stationsEl = document.getElementById('live-stations');
   if (state.stations.length === 0) {
     stationsEl.innerHTML = '<div class="empty">No stations configured.</div>';
   } else {
-    stationsEl.innerHTML = state.stations.map(st => {
-      const here = activeSessionsAtStation(st.id);
+    var html = '';
+    for (var k = 0; k < state.stations.length; k++) {
+      var st = state.stations[k];
+      var here = activeSessionsAtStation(st.id);
       if (here.length === 0) {
-        return `<div class="live-item">
-          <div class="name">${st.name}</div>
-          <div class="meta">idle</div>
-        </div>`;
+        html += '<div class="live-item"><div class="name">' + escapeHtml(st.name) + '</div><div class="meta">idle</div></div>';
+      } else {
+        var lines = [];
+        for (var m = 0; m < here.length; m++) {
+          var s2 = here[m];
+          lines.push(escapeHtml(nameOf(state.workers, s2.workerId)) + ' → ' + escapeHtml(nameOf(state.customers, s2.customerId)) + ' (' + fmtDuration(now() - s2.startTs) + ')');
+        }
+        html += '<div class="live-item busy"><div class="name">' + escapeHtml(st.name) + ' · ' + here.length + ' active</div><div class="meta">' + lines.join('<br>') + '</div></div>';
       }
-      const lines = here.map(s =>
-        `${nameOf(state.workers, s.workerId)} → ${nameOf(state.customers, s.customerId)} (${fmtDuration(now() - s.startTs)})`
-      ).join('<br>');
-      return `<div class="live-item busy">
-        <div class="name">${st.name} · ${here.length} active</div>
-        <div class="meta">${lines}</div>
-      </div>`;
-    }).join('');
+    }
+    stationsEl.innerHTML = html;
   }
 
-  const workersEl = document.getElementById('live-workers');
+  var workersEl = document.getElementById('live-workers');
   if (active.length === 0) {
     workersEl.innerHTML = '<div class="empty">No one is currently logged in.</div>';
   } else {
-    workersEl.innerHTML = active.map(s => `
-      <div class="live-item">
-        <div class="name">${nameOf(state.workers, s.workerId)}</div>
-        <div class="meta">${nameOf(state.stations, s.stationId)} · ${nameOf(state.customers, s.customerId)}</div>
-        <div class="meta">${fmtDuration(now() - s.startTs)} elapsed</div>
-      </div>
-    `).join('');
+    var whtml = '';
+    for (var w = 0; w < active.length; w++) {
+      var as = active[w];
+      whtml += '<div class="live-item">' +
+        '<div class="name">' + escapeHtml(nameOf(state.workers, as.workerId)) + '</div>' +
+        '<div class="meta">' + escapeHtml(nameOf(state.stations, as.stationId)) + ' · ' + escapeHtml(nameOf(state.customers, as.customerId)) + '</div>' +
+        '<div class="meta">' + fmtDuration(now() - as.startTs) + ' elapsed</div>' +
+      '</div>';
+    }
+    workersEl.innerHTML = whtml;
   }
 }
 
-// ---------- REPORTS ----------
 function renderReports() {
-  const weekAgo = now() - 7 * 24 * 3600 * 1000;
-  const recent = state.sessions.filter(s => s.startTs >= weekAgo);
+  var weekAgo = now() - 7 * 24 * 3600 * 1000;
+  var recent = state.sessions.filter(function(s) { return s.startTs >= weekAgo; });
 
-  const byStation = {};
-  recent.forEach(s => { byStation[s.stationId] = (byStation[s.stationId] || 0) + ((s.endTs || now()) - s.startTs); });
+  var byStation = {};
+  for (var i = 0; i < recent.length; i++) {
+    var s = recent[i];
+    byStation[s.stationId] = (byStation[s.stationId] || 0) + ((s.endTs || now()) - s.startTs);
+  }
   renderBars('rep-stations', byStation, state.stations);
 
-  const byCustomer = {};
-  state.sessions.forEach(s => { byCustomer[s.customerId] = (byCustomer[s.customerId] || 0) + ((s.endTs || now()) - s.startTs); });
+  var byCustomer = {};
+  for (var j = 0; j < state.sessions.length; j++) {
+    var s2 = state.sessions[j];
+    byCustomer[s2.customerId] = (byCustomer[s2.customerId] || 0) + ((s2.endTs || now()) - s2.startTs);
+  }
   renderBars('rep-customers', byCustomer, state.customers);
 
-  const byWorker = {};
-  recent.forEach(s => { byWorker[s.workerId] = (byWorker[s.workerId] || 0) + ((s.endTs || now()) - s.startTs); });
+  var byWorker = {};
+  for (var k = 0; k < recent.length; k++) {
+    var s3 = recent[k];
+    byWorker[s3.workerId] = (byWorker[s3.workerId] || 0) + ((s3.endTs || now()) - s3.startTs);
+  }
   renderBars('rep-workers', byWorker, state.workers);
 
-  const recentSorted = [...state.sessions].sort((a, b) => b.startTs - a.startTs).slice(0, 15);
-  const recentEl = document.getElementById('rep-recent');
+  var recentSorted = state.sessions.slice().sort(function(a, b) { return b.startTs - a.startTs; }).slice(0, 15);
+  var recentEl = document.getElementById('rep-recent');
   if (recentSorted.length === 0) {
     recentEl.innerHTML = '<div class="empty">No sessions yet.</div>';
   } else {
-    recentEl.innerHTML = `<table><thead><tr><th>When</th><th>Worker</th><th>Station</th><th>Customer</th><th>Duration</th></tr></thead><tbody>
-      ${recentSorted.map(s => `<tr>
-        <td>${fmtDateTime(s.startTs)}</td>
-        <td>${nameOf(state.workers, s.workerId)}</td>
-        <td>${nameOf(state.stations, s.stationId)}</td>
-        <td>${nameOf(state.customers, s.customerId)}</td>
-        <td>${s.endTs ? fmtDuration(s.endTs - s.startTs) : '<em>active</em>'}</td>
-      </tr>`).join('')}
-    </tbody></table>`;
+    var html = '<table><thead><tr><th>When</th><th>Worker</th><th>Station</th><th>Customer</th><th>Duration</th></tr></thead><tbody>';
+    for (var r = 0; r < recentSorted.length; r++) {
+      var sr = recentSorted[r];
+      html += '<tr>' +
+        '<td>' + fmtDateTime(sr.startTs) + '</td>' +
+        '<td>' + escapeHtml(nameOf(state.workers, sr.workerId)) + '</td>' +
+        '<td>' + escapeHtml(nameOf(state.stations, sr.stationId)) + '</td>' +
+        '<td>' + escapeHtml(nameOf(state.customers, sr.customerId)) + '</td>' +
+        '<td>' + (sr.endTs ? fmtDuration(sr.endTs - sr.startTs) : '<em>active</em>') + '</td>' +
+      '</tr>';
+    }
+    html += '</tbody></table>';
+    recentEl.innerHTML = html;
   }
 }
 
 function renderBars(elId, data, lookup) {
-  const el = document.getElementById(elId);
-  const entries = Object.entries(data).map(([id, ms]) => ({ name: nameOf(lookup, id), ms })).sort((a, b) => b.ms - a.ms);
+  var el = document.getElementById(elId);
+  var entries = [];
+  for (var key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      entries.push({ name: nameOf(lookup, key), ms: data[key] });
+    }
+  }
+  entries.sort(function(a, b) { return b.ms - a.ms; });
   if (entries.length === 0) { el.innerHTML = '<div class="empty">No data yet.</div>'; return; }
-  const max = Math.max(...entries.map(e => e.ms));
-  el.innerHTML = entries.map(e => `
-    <div class="bar-row">
-      <div class="bar-label">${e.name}</div>
-      <div class="bar-track"><div class="bar-fill" style="width: ${(e.ms / max * 100).toFixed(0)}%"></div></div>
-      <div class="bar-value">${fmtDuration(e.ms)}</div>
-    </div>
-  `).join('');
+  var max = 0;
+  for (var i = 0; i < entries.length; i++) if (entries[i].ms > max) max = entries[i].ms;
+  var html = '';
+  for (var j = 0; j < entries.length; j++) {
+    var e = entries[j];
+    html += '<div class="bar-row">' +
+      '<div class="bar-label">' + escapeHtml(e.name) + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width: ' + (e.ms / max * 100).toFixed(0) + '%"></div></div>' +
+      '<div class="bar-value">' + fmtDuration(e.ms) + '</div>' +
+    '</div>';
+  }
+  el.innerHTML = html;
 }
 
-// ---------- ADMIN ----------
 function renderAdmin() {
-  const sel = document.getElementById('admin-this-station');
-  sel.innerHTML = '<option value="">— Not configured —</option>' +
-    state.stations.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  // Sync UI
+  var urlInput = document.getElementById('sync-url');
+  if (urlInput && document.activeElement !== urlInput) urlInput.value = syncUrl;
+  var autoCheck = document.getElementById('sync-auto');
+  if (autoCheck) autoCheck.checked = syncAuto;
+  updateSyncStatus();
+
+  var sel = document.getElementById('admin-this-station');
+  var opts = '<option value="">— Not configured —</option>';
+  for (var i = 0; i < state.stations.length; i++) {
+    opts += '<option value="' + state.stations[i].id + '">' + escapeHtml(state.stations[i].name) + '</option>';
+  }
+  sel.innerHTML = opts;
   if (thisStationId) sel.value = thisStationId;
 
-  const wt = document.querySelector('#workers-table tbody');
-  wt.innerHTML = state.workers.length === 0
-    ? '<tr><td colspan="3" class="empty">No workers yet.</td></tr>'
-    : state.workers.map(w => `<tr><td>${w.name}</td><td><code>${w.cardId}</code></td><td><button data-remove-worker="${w.id}">Remove</button></td></tr>`).join('');
+  var wt = document.querySelector('#workers-table tbody');
+  if (state.workers.length === 0) {
+    wt.innerHTML = '<tr><td colspan="3" class="empty">No workers yet.</td></tr>';
+  } else {
+    var whtml = '';
+    for (var j = 0; j < state.workers.length; j++) {
+      var w = state.workers[j];
+      whtml += '<tr><td>' + escapeHtml(w.name) + '</td><td><code>' + escapeHtml(w.cardId) + '</code></td><td><button data-remove-worker="' + w.id + '">Remove</button></td></tr>';
+    }
+    wt.innerHTML = whtml;
+  }
 
-  const st = document.querySelector('#stations-table tbody');
-  st.innerHTML = state.stations.length === 0
-    ? '<tr><td colspan="2" class="empty">No stations yet.</td></tr>'
-    : state.stations.map(s => `<tr><td>${s.name}</td><td><button data-remove-station="${s.id}">Remove</button></td></tr>`).join('');
+  var st = document.querySelector('#stations-table tbody');
+  if (state.stations.length === 0) {
+    st.innerHTML = '<tr><td colspan="2" class="empty">No stations yet.</td></tr>';
+  } else {
+    var sthtml = '';
+    for (var k = 0; k < state.stations.length; k++) {
+      var ss = state.stations[k];
+      sthtml += '<tr><td>' + escapeHtml(ss.name) + '</td><td><button data-remove-station="' + ss.id + '">Remove</button></td></tr>';
+    }
+    st.innerHTML = sthtml;
+  }
 
-  const ct = document.querySelector('#customers-table tbody');
-  ct.innerHTML = state.customers.length === 0
-    ? '<tr><td colspan="2" class="empty">No customers yet.</td></tr>'
-    : state.customers.map(c => `<tr><td>${c.name}</td><td><button data-remove-customer="${c.id}">Remove</button></td></tr>`).join('');
+  var ct = document.querySelector('#customers-table tbody');
+  if (state.customers.length === 0) {
+    ct.innerHTML = '<tr><td colspan="2" class="empty">No customers yet.</td></tr>';
+  } else {
+    var chtml = '';
+    for (var c = 0; c < state.customers.length; c++) {
+      var cc = state.customers[c];
+      chtml += '<tr><td>' + escapeHtml(cc.name) + '</td><td><button data-remove-customer="' + cc.id + '">Remove</button></td></tr>';
+    }
+    ct.innerHTML = chtml;
+  }
 }
 
-document.getElementById('admin-this-station').addEventListener('change', (e) => {
+document.getElementById('admin-this-station').addEventListener('change', function(e) {
   thisStationId = e.target.value || null;
   saveThisStation();
   renderAll();
   toast(thisStationId ? 'This tablet is now ' + nameOf(state.stations, thisStationId) : 'Tablet station cleared');
 });
 
-document.getElementById('capture-card').addEventListener('click', () => {
-  captureNextCard = true;
-  const inp = document.getElementById('new-worker-card');
-  inp.value = '';
-  inp.focus();
-  toast('Tap a card on the reader now', 'success');
+document.getElementById('sync-save').addEventListener('click', function() {
+  syncUrl = document.getElementById('sync-url').value.trim();
+  saveSyncSettings();
+  updateSyncStatus();
+  toast(syncUrl ? 'Sync URL saved' : 'Sync URL cleared', 'success');
+});
+document.getElementById('sync-test').addEventListener('click', function() {
+  syncUrl = document.getElementById('sync-url').value.trim();
+  saveSyncSettings();
+  testSyncConnection();
+});
+document.getElementById('sync-now').addEventListener('click', function() {
+  syncToCloud(null, false);
+});
+document.getElementById('sync-auto').addEventListener('change', function(e) {
+  syncAuto = e.target.checked;
+  saveSyncSettings();
+  toast(syncAuto ? 'Auto-sync on' : 'Auto-sync off');
 });
 
-// When focused on the card field, capture readings into it
-document.getElementById('new-worker-card').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && captureNextCard) {
-    e.preventDefault();
-    captureNextCard = false;
-    toast('Card captured', 'success');
-  }
-});
-
-document.getElementById('add-worker').addEventListener('click', () => {
-  const name = document.getElementById('new-worker-name').value.trim();
-  const card = document.getElementById('new-worker-card').value.trim();
+document.getElementById('add-worker').addEventListener('click', function() {
+  var name = document.getElementById('new-worker-name').value.trim();
+  var card = document.getElementById('new-worker-card').value.trim();
   if (!name || !card) { toast('Need both name and card', 'err'); return; }
-  if (state.workers.some(w => w.cardId === card)) { toast('Card already used', 'err'); return; }
-  state.workers.push({ id: uid(), name, cardId: card });
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].cardId === card) { toast('Card already used', 'err'); return; }
+  }
+  state.workers.push({ id: uid(), name: name, cardId: card });
   document.getElementById('new-worker-name').value = '';
   document.getElementById('new-worker-card').value = '';
   saveState(); renderAll();
 });
-document.getElementById('add-station').addEventListener('click', () => {
-  const name = document.getElementById('new-station-name').value.trim();
+document.getElementById('add-station').addEventListener('click', function() {
+  var name = document.getElementById('new-station-name').value.trim();
   if (!name) return;
-  state.stations.push({ id: uid(), name });
+  state.stations.push({ id: uid(), name: name });
   document.getElementById('new-station-name').value = '';
   saveState(); renderAll();
 });
-document.getElementById('add-customer').addEventListener('click', () => {
-  const name = document.getElementById('new-customer-name').value.trim();
+document.getElementById('add-customer').addEventListener('click', function() {
+  var name = document.getElementById('new-customer-name').value.trim();
   if (!name) return;
-  state.customers.push({ id: uid(), name });
+  state.customers.push({ id: uid(), name: name });
   document.getElementById('new-customer-name').value = '';
   saveState(); renderAll();
 });
 
-document.addEventListener('click', (e) => {
-  const t = e.target;
-  if (t.dataset.removeWorker) {
-    if (!confirm('Remove this worker? Past sessions will keep their data.')) return;
-    state.workers = state.workers.filter(w => w.id !== t.dataset.removeWorker);
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var rw = t.getAttribute('data-remove-worker');
+  var rs = t.getAttribute('data-remove-station');
+  var rc = t.getAttribute('data-remove-customer');
+  if (rw) {
+    if (!confirm('Remove this worker?')) return;
+    state.workers = state.workers.filter(function(w) { return w.id !== rw; });
     saveState(); renderAll();
-  } else if (t.dataset.removeStation) {
+  } else if (rs) {
     if (!confirm('Remove this station?')) return;
-    state.stations = state.stations.filter(s => s.id !== t.dataset.removeStation);
+    state.stations = state.stations.filter(function(s) { return s.id !== rs; });
     saveState(); renderAll();
-  } else if (t.dataset.removeCustomer) {
+  } else if (rc) {
     if (!confirm('Remove this customer?')) return;
-    state.customers = state.customers.filter(c => c.id !== t.dataset.removeCustomer);
+    state.customers = state.customers.filter(function(c) { return c.id !== rc; });
     saveState(); renderAll();
   }
 });
 
-// ---------- DEMO DATA ----------
-document.getElementById('seed-demo').addEventListener('click', () => {
+document.getElementById('seed-demo').addEventListener('click', function() {
   if (state.workers.length || state.stations.length || state.customers.length) {
     if (!confirm('Add demo data on top of existing?')) return;
   }
-  const wIds = [
+  var workerData = [
     { name: 'Alex Kim', cardId: '0004471892' },
     { name: 'Maya Rodriguez', cardId: '0008820134' },
     { name: 'Sam Chen', cardId: '0001209855' },
     { name: 'Jordan Patel', cardId: '0007733201' },
     { name: 'Riley Nakamura', cardId: '0003344110' }
-  ].map(w => { const id = uid(); state.workers.push({ id, ...w }); return id; });
+  ];
+  var wIds = [];
+  for (var i = 0; i < workerData.length; i++) {
+    var id = uid();
+    state.workers.push({ id: id, name: workerData[i].name, cardId: workerData[i].cardId });
+    wIds.push(id);
+  }
 
-  const sIds = ['Cutting', 'Welding', 'Assembly', 'QC / Inspection', 'Packaging']
-    .map(n => { const id = uid(); state.stations.push({ id, name: n }); return id; });
+  var stationNames = ['Cutting', 'Welding', 'Assembly', 'QC / Inspection', 'Packaging'];
+  var sIds = [];
+  for (var j = 0; j < stationNames.length; j++) {
+    var sid = uid();
+    state.stations.push({ id: sid, name: stationNames[j] });
+    sIds.push(sid);
+  }
 
-  const cIds = ['Acme Industries', 'Brightline Co.', 'Northwind Mfg.', 'Stellar Robotics']
-    .map(n => { const id = uid(); state.customers.push({ id, name: n }); return id; });
+  var customerNames = ['Acme Industries', 'Brightline Co.', 'Northwind Mfg.', 'Stellar Robotics'];
+  var cIds = [];
+  for (var k = 0; k < customerNames.length; k++) {
+    var cid = uid();
+    state.customers.push({ id: cid, name: customerNames[k] });
+    cIds.push(cid);
+  }
 
-  const baseTime = now() - 3 * 24 * 3600 * 1000;
-  for (let day = 0; day < 3; day++) {
-    let dayT = baseTime + day * 24 * 3600 * 1000 + 8 * 3600 * 1000;
+  var baseTime = now() - 3 * 24 * 3600 * 1000;
+  for (var day = 0; day < 3; day++) {
+    var dayT = baseTime + day * 24 * 3600 * 1000 + 8 * 3600 * 1000;
     while (dayT < baseTime + day * 24 * 3600 * 1000 + 17 * 3600 * 1000) {
-      const w = wIds[Math.floor(Math.random() * wIds.length)];
-      const st = sIds[Math.floor(Math.random() * sIds.length)];
-      const c = cIds[Math.floor(Math.random() * cIds.length)];
-      const dur = (15 + Math.random() * 60) * 60 * 1000;
+      var w = wIds[Math.floor(Math.random() * wIds.length)];
+      var st = sIds[Math.floor(Math.random() * sIds.length)];
+      var c = cIds[Math.floor(Math.random() * cIds.length)];
+      var dur = (15 + Math.random() * 60) * 60 * 1000;
       state.sessions.push({ id: uid(), workerId: w, stationId: st, customerId: c, startTs: dayT, endTs: dayT + dur });
       dayT += dur + Math.random() * 10 * 60 * 1000;
     }
@@ -798,70 +1084,77 @@ document.getElementById('seed-demo').addEventListener('click', () => {
   toast('Demo data loaded', 'success');
 });
 
-// ---------- EXPORT / IMPORT ----------
-document.getElementById('export-csv').addEventListener('click', () => {
-  const rows = [['session_id','worker','card','station','customer','start','end','duration_minutes']];
-  state.sessions.forEach(s => {
-    const w = state.workers.find(x => x.id === s.workerId);
+function showExportOutput(text, kind) {
+  var el = document.getElementById('export-output');
+  el.textContent = text;
+  el.style.display = '';
+  toast('Tap and hold the text below to copy', 'success');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('export-csv').addEventListener('click', function() {
+  var rows = [['session_id','worker','card','station','customer','start','end','duration_minutes']];
+  for (var i = 0; i < state.sessions.length; i++) {
+    var s = state.sessions[i];
+    var w = null;
+    for (var j = 0; j < state.workers.length; j++) {
+      if (state.workers[j].id === s.workerId) { w = state.workers[j]; break; }
+    }
     rows.push([
-      s.id, w ? w.name : '', w ? w.cardId : '',
-      nameOf(state.stations, s.stationId), nameOf(state.customers, s.customerId),
+      s.id,
+      w ? w.name : '',
+      w ? w.cardId : '',
+      nameOf(state.stations, s.stationId),
+      nameOf(state.customers, s.customerId),
       new Date(s.startTs).toISOString(),
       s.endTs ? new Date(s.endTs).toISOString() : '',
       s.endTs ? ((s.endTs - s.startTs) / 60000).toFixed(2) : ''
     ]);
-  });
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  downloadFile(csv, 'station_sessions.csv', 'text/csv');
+  }
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+  showExportOutput(csv);
 });
 
-document.getElementById('export-backup').addEventListener('click', () => {
-  const blob = JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), state }, null, 2);
-  downloadFile(blob, `station_backup_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
-  toast('Backup downloaded', 'success');
+document.getElementById('export-backup').addEventListener('click', function() {
+  var backup = { version: 1, exportedAt: new Date().toISOString(), state: state };
+  showExportOutput(JSON.stringify(backup, null, 2));
 });
 
-document.getElementById('import-backup').addEventListener('click', () => {
-  document.getElementById('import-file').click();
+document.getElementById('import-backup').addEventListener('click', function() {
+  document.getElementById('import-area').style.display = '';
+  document.getElementById('import-text').focus();
 });
-document.getElementById('import-file').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data.state || !data.state.workers) throw new Error('Invalid backup file');
-      if (!confirm('Replace ALL current data with backup contents?')) return;
-      state = data.state;
-      saveState(); renderAll();
-      toast('Backup restored', 'success');
-    } catch (err) {
-      toast('Could not read backup: ' + err.message, 'err');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
+document.getElementById('import-cancel').addEventListener('click', function() {
+  document.getElementById('import-area').style.display = 'none';
+  document.getElementById('import-text').value = '';
+});
+document.getElementById('import-apply').addEventListener('click', function() {
+  var text = document.getElementById('import-text').value.trim();
+  if (!text) { toast('Paste backup JSON first', 'err'); return; }
+  try {
+    var data = JSON.parse(text);
+    if (!data.state || !data.state.workers) throw new Error('Invalid backup format');
+    if (!confirm('Replace ALL current data with this backup?')) return;
+    state = data.state;
+    saveState(); renderAll();
+    document.getElementById('import-area').style.display = 'none';
+    document.getElementById('import-text').value = '';
+    toast('Backup restored', 'success');
+  } catch (err) {
+    toast('Invalid JSON: ' + err.message, 'err');
+  }
 });
 
-function downloadFile(content, filename, mime) {
-  const blob = new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-document.getElementById('reset-data').addEventListener('click', () => {
-  if (!confirm('Delete ALL workers, stations, customers, and sessions on this tablet?')) return;
+document.getElementById('reset-data').addEventListener('click', function() {
+  if (!confirm('Delete ALL data on this tablet?')) return;
   if (!confirm('Are you sure? This cannot be undone.')) return;
   state = { workers: [], stations: [], customers: [], sessions: [] };
   saveState(); renderAll();
   toast('All data cleared');
 });
 
-// ---------- RENDER ----------
 function renderCurrentView() {
   if (currentView === 'station') renderStation();
   else if (currentView === 'active') renderActive();
@@ -874,34 +1167,20 @@ function renderAll() {
   renderCurrentView();
 }
 
-// ---------- INIT ----------
 (function init() {
-  if (!checkStorage()) {
-    document.getElementById('storage-warning').classList.add('show');
-    document.getElementById('storage-warning').innerHTML = '<strong>Warning:</strong> This browser is blocking storage. Data will NOT be saved between sessions. Disable private/incognito mode.';
-  } else {
-    // Show informational banner once
-    document.getElementById('storage-warning').classList.add('show');
-  }
   loadState();
   renderAll();
-
-  // Tick elapsed times every second
-  setInterval(() => {
+  setInterval(function() {
     renderTopbar();
     if (currentView === 'active' && thisStationId) {
-      activeSessionsAtStation(thisStationId).forEach(s => {
-        const el = document.querySelector(`[data-elapsed-for="${s.id}"]`);
-        if (el) el.textContent = fmtClock(now() - s.startTs);
-      });
+      var sessions = activeSessionsAtStation(thisStationId);
+      for (var i = 0; i < sessions.length; i++) {
+        var el = document.querySelector('[data-elapsed-for="' + sessions[i].id + '"]');
+        if (el) el.textContent = fmtClock(now() - sessions[i].startTs);
+      }
     }
   }, 1000);
-
-  // Re-render every 30s in case clock crosses day boundary etc.
-  setInterval(() => renderCurrentView(), 30000);
-
-  // When the page regains visibility (tablet wakes from sleep), redraw to fix any frozen timers
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener('visibilitychange', function() {
     if (!document.hidden) renderAll();
   });
 })();
