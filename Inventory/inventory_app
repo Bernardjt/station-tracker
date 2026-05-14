@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Inventory Tracker</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    background: #f5f5f4; color: #1c1917;
+    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  .app { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+  button {
+    font-family: inherit; font-size: 16px; font-weight: 600;
+    padding: 12px 20px;
+    background: #ffffff; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 12px;
+    cursor: pointer; letter-spacing: -0.01em;
+    transition: transform 0.05s, background 0.1s;
+  }
+  button:active { background: #f0efed; transform: scale(0.98); }
+  button.primary {
+    background: #f97316; color: #ffffff; border-color: #f97316;
+    box-shadow: 0 1px 2px rgba(249, 115, 22, 0.2);
+  }
+  button.primary:active { background: #ea580c; }
+  button.danger { color: #991b1b; border-color: #fca5a5; background: #fef2f2; }
+  button.large { font-size: 18px; padding: 16px 32px; }
+
+  input, select, textarea {
+    font-family: inherit; font-size: 16px; font-weight: 500;
+    padding: 12px 16px;
+    background: #ffffff; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 12px;
+    outline: none; -webkit-appearance: none; line-height: 1.4;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  }
+
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px;
+    background: #ffffff; border-radius: 16px;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .app-label { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .app-label .small { font-size: 14px; color: #78716c; font-weight: 500; margin-left: 10px; }
+  .clock { font-size: 18px; color: #57534e; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav button { font-size: 15px; padding: 10px 16px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Inventory form */
+  .form-card {
+    background: #ffffff; border: 1px solid #e7e5e4;
+    border-radius: 20px; padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+  }
+  .form-card h2 { font-size: 24px; font-weight: 700; margin: 0 0 20px; letter-spacing: -0.02em; }
+
+  .action-toggle { display: flex; gap: 10px; margin-bottom: 16px; }
+  .action-toggle button { flex: 1; font-size: 18px; padding: 16px; }
+
+  .form-row { margin-bottom: 16px; }
+  .form-row label {
+    display: block; font-size: 14px; font-weight: 600;
+    color: #57534e; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .form-row input, .form-row select {
+    width: 100%; font-size: 18px; padding: 14px 18px;
+  }
+  .worker-confirm {
+    margin-top: 8px; font-size: 15px; font-weight: 600; color: #166534;
+    min-height: 22px;
+  }
+  .worker-confirm.unknown { color: #991b1b; }
+
+  /* Recent table */
+  .live-section { margin-bottom: 24px; }
+  .live-section h3 {
+    font-size: 13px; font-weight: 700; color: #78716c;
+    margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th {
+    text-align: left; font-weight: 700; color: #78716c;
+    padding: 12px 8px; border-bottom: 2px solid #e7e5e4;
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  td { padding: 12px 8px; border-bottom: 1px solid #f0efed; }
+  .empty {
+    color: #a8a29e; font-style: italic; padding: 24px 0;
+    font-size: 16px; text-align: center; font-weight: 500;
+  }
+
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+  }
+  .badge.out { background: #fef3c7; color: #92400e; }
+  .badge.in { background: #dcfce7; color: #166534; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%); -webkit-transform: translateX(-50%);
+    background: #1c1917; color: #ffffff;
+    border-radius: 14px; padding: 16px 24px;
+    font-size: 16px; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; }
+  .toast.success { background: #166534; }
+  .toast.warn { background: #92400e; }
+  .toast.err { background: #991b1b; }
+
+  /* Admin */
+  .admin-section { margin-bottom: 24px; }
+  .admin-card {
+    background: #ffffff; border: 1px solid #e7e5e4;
+    border-radius: 16px; padding: 24px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .row label { font-size: 15px; color: #57534e; min-width: 100px; font-weight: 600; }
+  .help { font-size: 15px; color: #57534e; line-height: 1.6; margin-bottom: 18px; font-weight: 500; }
+  h3 { font-size: 20px; font-weight: 700; margin: 16px 0 12px; letter-spacing: -0.02em; }
+  code {
+    background: #f0efed; padding: 4px 8px; border-radius: 6px;
+    font-size: 14px; font-family: ui-monospace, Menlo, monospace; font-weight: 500;
+  }
+
+  .export-output {
+    background: #f0efed; color: #1c1917;
+    border: 1px solid #d6d3d1; border-radius: 12px;
+    padding: 16px; margin-top: 16px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; max-height: 320px; overflow: auto;
+    white-space: pre; word-wrap: normal;
+    -webkit-user-select: all; user-select: all; line-height: 1.5;
+  }
+
+  /* PIN lock */
+  .pin-lock {
+    background: #ffffff; border: 1px solid #e7e5e4;
+    border-radius: 20px; padding: 48px 32px;
+    text-align: center; max-width: 480px; margin: 40px auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .pin-lock .icon { font-size: 64px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div class="app-label">📦 Inventory<span class="small">tablet</span></div>
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+      <div class="clock" id="clock"></div>
+      <div class="nav">
+        <button data-view="log">Log transaction</button>
+        <button data-view="recent">Recent</button>
+        <button data-view="admin">Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen active" id="view-log">
+    <div class="form-card">
+      <h2>Log inventory transaction</h2>
+
+      <div class="form-row">
+        <label>Action</label>
+        <div class="action-toggle">
+          <button id="action-out" class="primary">Withdraw (OUT)</button>
+          <button id="action-in">Receive (IN)</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Worker</label>
+        <div class="action-toggle" style="margin-bottom:10px;">
+          <button id="worker-mode-tap" class="primary">Tap card</button>
+          <button id="worker-mode-pick">Pick name</button>
+        </div>
+        <input type="text" id="inv-card" placeholder="Tap card here" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+        <select id="inv-worker-pick" style="display:none; width:100%; font-size:18px; padding:14px 18px;"><option value="">— Select worker —</option></select>
+        <div class="worker-confirm" id="worker-confirm"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Customer / Job</label>
+        <select id="inv-customer"><option value="">— Select —</option></select>
+      </div>
+
+      <div class="form-row">
+        <label>Item</label>
+        <input type="text" id="inv-item" placeholder="e.g. steel rod 6mm, blue paint qt" />
+      </div>
+
+      <div class="form-row">
+        <label>Quantity</label>
+        <input type="text" id="inv-qty" placeholder="e.g. 5, 2.5, 100" inputmode="decimal" />
+      </div>
+
+      <div class="form-row">
+        <label>Notes (optional)</label>
+        <input type="text" id="inv-notes" placeholder="Anything else worth recording" />
+      </div>
+
+      <div class="row" style="margin-top:20px;">
+        <button id="inv-submit" class="primary large">Log transaction</button>
+        <button id="inv-clear">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="view-recent">
+    <div class="live-section">
+      <h3>Recent transactions</h3>
+      <div id="recent-list"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="view-admin">
+    <div id="admin-lock">
+      <div class="pin-lock">
+        <div class="icon">🔒</div>
+        <h3 style="font-size:24px; margin:0 0 12px;">Admin locked</h3>
+        <p class="help">Enter the PIN to access Admin settings.</p>
+        <div class="row" style="justify-content:center;">
+          <input type="password" id="admin-pin-input" placeholder="PIN" inputmode="numeric" autocomplete="off" style="font-size:24px; text-align:center; letter-spacing:0.3em; max-width:200px;" />
+        </div>
+        <div class="row" style="justify-content:center; margin-top:8px;">
+          <button id="admin-pin-submit" class="primary">Unlock</button>
+        </div>
+        <p class="help" style="margin-top:16px; font-size:13px;">First time? Default PIN is <code>0000</code>. Change it once unlocked.</p>
+      </div>
+    </div>
+
+    <div id="admin-content" style="display:none;">
+      <div class="admin-section">
+        <h3>Admin security</h3>
+        <div class="admin-card">
+          <p class="help">Change the Admin PIN for this inventory app.</p>
+          <div class="row"><label>Current PIN</label><input type="password" id="pin-current" inputmode="numeric" autocomplete="off" /></div>
+          <div class="row"><label>New PIN</label><input type="password" id="pin-new" inputmode="numeric" autocomplete="off" placeholder="4+ digits" /></div>
+          <div class="row"><label>Confirm</label><input type="password" id="pin-confirm" inputmode="numeric" autocomplete="off" /></div>
+          <div class="row"><button id="pin-change" class="primary">Change PIN</button><button id="pin-lock-now">Lock now</button></div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Workers (cards)</h3>
+        <div class="admin-card">
+          <p class="help">Workers for the inventory app are separate from the station app.</p>
+          <div class="row">
+            <input type="text" id="new-worker-name" placeholder="Worker name" />
+            <input type="text" id="new-worker-card" placeholder="Card ID" />
+            <button id="add-worker" class="primary">Add</button>
+          </div>
+          <table id="workers-table">
+            <thead><tr><th>Name</th><th>Card</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Customers / Jobs</h3>
+        <div class="admin-card">
+          <p class="help">Could be customers, jobs, projects, or suppliers — whatever you're tagging transactions to.</p>
+          <div class="row">
+            <input type="text" id="new-customer-name" placeholder="Customer or job name" />
+            <button id="add-customer" class="primary">Add</button>
+          </div>
+          <table id="customers-table">
+            <thead><tr><th>Name</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Cloud sync (Google Sheets)</h3>
+        <div class="admin-card">
+          <p class="help">Paste your Inventory Apps Script URL. Each transaction will sync automatically.</p>
+          <div class="row">
+            <input type="text" id="sync-url" placeholder="https://script.google.com/.../exec" style="flex:1; min-width:280px;" />
+            <button id="sync-save" class="primary">Save URL</button>
+          </div>
+          <div class="row">
+            <button id="sync-test">Test connection</button>
+            <button id="sync-now">Sync all now</button>
+            <label style="margin-left:8px;"><input type="checkbox" id="sync-auto" checked /> Auto-sync</label>
+          </div>
+          <div id="sync-status" style="font-size:13px; color:#57534e; margin-top:8px;">Not configured</div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Data</h3>
+        <div class="admin-card">
+          <p class="help">Export, backup, restore, reset.</p>
+          <div class="row">
+            <button id="seed-demo">Load demo data</button>
+            <button id="export-csv" class="primary">Export CSV</button>
+            <button id="export-backup">Export full backup</button>
+            <button id="import-backup">Import backup</button>
+            <button id="reset-data" class="danger">Reset everything</button>
+          </div>
+          <div id="export-output" class="export-output" style="display:none"></div>
+          <div id="import-area" style="display:none; margin-top:12px;">
+            <p class="help">Paste backup JSON:</p>
+            <textarea id="import-text" style="width:100%; height:120px; font-family:ui-monospace, Menlo, monospace; font-size:11px; padding:8px;"></textarea>
+            <div class="row" style="margin-top:8px;">
+              <button id="import-apply" class="primary">Apply backup</button>
+              <button id="import-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+var STORAGE_KEY = 'inventoryTracker_v1';
+var SYNC_URL_KEY = 'inventoryTracker_syncUrl';
+var SYNC_AUTO_KEY = 'inventoryTracker_syncAuto';
+var SYNC_STATUS_KEY = 'inventoryTracker_syncStatus';
+var DEFAULT_PIN = '0000';
+
+var state = { workers: [], customers: [], transactions: [], config: { adminPin: DEFAULT_PIN } };
+var syncUrl = '';
+var syncAuto = true;
+var lastSyncIso = '';
+var currentView = 'log';
+var invAction = 'out';
+var workerMode = 'tap'; // 'tap' or 'pick'
+var adminUnlocked = false;
+
+function loadState() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch (e) {}
+  if (!state.config) state.config = { adminPin: DEFAULT_PIN };
+  if (!state.config.adminPin) state.config.adminPin = DEFAULT_PIN;
+  try {
+    syncUrl = localStorage.getItem(SYNC_URL_KEY) || '';
+    var auto = localStorage.getItem(SYNC_AUTO_KEY);
+    syncAuto = auto === null ? true : auto === 'true';
+    lastSyncIso = localStorage.getItem(SYNC_STATUS_KEY) || '';
+  } catch (e) {}
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch (e) { toast('Storage error', 'err'); }
+}
+function saveSync() {
+  try {
+    localStorage.setItem(SYNC_URL_KEY, syncUrl);
+    localStorage.setItem(SYNC_AUTO_KEY, syncAuto ? 'true' : 'false');
+  } catch (e) {}
+}
+
+function uid() { return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4); }
+function now() { return Date.now(); }
+function nameOf(arr, id) {
+  for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i].name;
+  return '—';
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function fmtDateTime(ts) {
+  return new Date(ts).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function findWorkerByCard(cardId) {
+  var c = String(cardId).trim();
+  if (!c) return null;
+  for (var i = 0; i < state.workers.length; i++) if (state.workers[i].cardId === c) return state.workers[i];
+  return null;
+}
+
+function toast(msg, kind) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind ? ' ' + kind : '');
+  setTimeout(function() { t.className = 'toast'; }, 2500);
+}
+
+function setView(name) {
+  if (currentView === 'admin' && name !== 'admin') adminUnlocked = false;
+  currentView = name;
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById('view-' + name).classList.add('active');
+  renderCurrentView();
+}
+var navBtns = document.querySelectorAll('[data-view]');
+for (var i = 0; i < navBtns.length; i++) {
+  (function(b) { b.addEventListener('click', function() { setView(b.getAttribute('data-view')); }); })(navBtns[i]);
+}
+
+function renderClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// ----- LOG (main form) -----
+function renderLog() {
+  // Action toggle
+  document.getElementById('action-out').className = invAction === 'out' ? 'primary' : '';
+  document.getElementById('action-in').className = invAction === 'in' ? 'primary' : '';
+
+  // Worker mode toggle
+  document.getElementById('worker-mode-tap').className = workerMode === 'tap' ? 'primary' : '';
+  document.getElementById('worker-mode-pick').className = workerMode === 'pick' ? 'primary' : '';
+
+  var cardInput = document.getElementById('inv-card');
+  var pickSelect = document.getElementById('inv-worker-pick');
+  if (workerMode === 'tap') {
+    cardInput.style.display = '';
+    pickSelect.style.display = 'none';
+  } else {
+    cardInput.style.display = 'none';
+    pickSelect.style.display = '';
+    // Populate worker list (sorted alphabetically for easy scanning)
+    var prev = pickSelect.value;
+    var sortedWorkers = state.workers.slice().sort(function(a, b) {
+      return a.name.localeCompare(b.name);
+    });
+    var opts = '<option value="">— Select worker —</option>';
+    for (var i = 0; i < sortedWorkers.length; i++) {
+      opts += '<option value="' + sortedWorkers[i].id + '">' + escapeHtml(sortedWorkers[i].name) + '</option>';
+    }
+    pickSelect.innerHTML = opts;
+    if (prev) pickSelect.value = prev;
+  }
+
+  // Customer dropdown
+  var sel = document.getElementById('inv-customer');
+  var prevC = sel.value;
+  var sortedCust = state.customers.slice().sort(function(a, b) {
+    return a.name.localeCompare(b.name);
+  });
+  var copts = '<option value="">— Select —</option>';
+  for (var j = 0; j < sortedCust.length; j++) {
+    copts += '<option value="' + sortedCust[j].id + '">' + escapeHtml(sortedCust[j].name) + '</option>';
+  }
+  sel.innerHTML = copts;
+  if (prevC) sel.value = prevC;
+
+  // Worker confirm display
+  var conf = document.getElementById('worker-confirm');
+  if (workerMode === 'tap') {
+    var card = cardInput.value.trim();
+    if (!card) {
+      conf.textContent = '';
+      conf.className = 'worker-confirm';
+    } else {
+      var w = findWorkerByCard(card);
+      if (w) {
+        conf.textContent = '✓ ' + w.name;
+        conf.className = 'worker-confirm';
+      } else {
+        conf.textContent = 'Unknown card — add the worker in Admin';
+        conf.className = 'worker-confirm unknown';
+      }
+    }
+  } else {
+    conf.textContent = '';
+    conf.className = 'worker-confirm';
+  }
+
+  // Focus appropriate field
+  setTimeout(function() {
+    if (currentView !== 'log') return;
+    if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
+    if (workerMode === 'tap') cardInput.focus();
+  }, 100);
+}
+
+document.getElementById('action-out').addEventListener('click', function() { invAction = 'out'; renderLog(); });
+document.getElementById('action-in').addEventListener('click', function() { invAction = 'in'; renderLog(); });
+document.getElementById('inv-card').addEventListener('input', renderLog);
+
+document.getElementById('worker-mode-tap').addEventListener('click', function() {
+  workerMode = 'tap';
+  // Clear any picked worker so the two modes don't get out of sync
+  document.getElementById('inv-worker-pick').value = '';
+  renderLog();
+});
+document.getElementById('worker-mode-pick').addEventListener('click', function() {
+  workerMode = 'pick';
+  // Clear card input
+  document.getElementById('inv-card').value = '';
+  renderLog();
+});
+
+document.getElementById('inv-clear').addEventListener('click', function() {
+  document.getElementById('inv-card').value = '';
+  document.getElementById('inv-worker-pick').value = '';
+  document.getElementById('inv-customer').value = '';
+  document.getElementById('inv-item').value = '';
+  document.getElementById('inv-qty').value = '';
+  document.getElementById('inv-notes').value = '';
+  renderLog();
+});
+
+document.getElementById('inv-submit').addEventListener('click', function() {
+  var customerId = document.getElementById('inv-customer').value;
+  var item = document.getElementById('inv-item').value.trim();
+  var qty = document.getElementById('inv-qty').value.trim();
+  var notes = document.getElementById('inv-notes').value.trim();
+
+  // Resolve worker based on mode
+  var worker = null;
+  if (workerMode === 'tap') {
+    var cardId = document.getElementById('inv-card').value.trim();
+    if (!cardId) { toast('Tap a worker card', 'err'); return; }
+    worker = findWorkerByCard(cardId);
+    if (!worker) { toast('Unknown card "' + cardId + '"', 'err'); return; }
+  } else {
+    var workerId = document.getElementById('inv-worker-pick').value;
+    if (!workerId) { toast('Pick a worker', 'err'); return; }
+    for (var i = 0; i < state.workers.length; i++) {
+      if (state.workers[i].id === workerId) { worker = state.workers[i]; break; }
+    }
+    if (!worker) { toast('Worker not found', 'err'); return; }
+  }
+
+  if (!customerId) { toast('Pick a customer', 'err'); return; }
+  if (!item) { toast('Enter an item', 'err'); return; }
+  if (!qty) { toast('Enter a quantity', 'err'); return; }
+
+  var txn = {
+    id: uid(), ts: now(), action: invAction,
+    workerId: worker.id, workerName: worker.name, cardId: worker.cardId,
+    customerId: customerId, customer: nameOf(state.customers, customerId),
+    item: item, quantity: qty, notes: notes
+  };
+  state.transactions.push(txn);
+  saveState();
+  toast(worker.name + ' logged ' + (invAction === 'out' ? 'OUT' : 'IN') + ' ' + qty + ' × ' + item, 'success');
+
+  if (syncAuto && syncUrl) syncToCloud([txn], true);
+
+  // Clear inputs for next entry — keep customer and worker mode
+  document.getElementById('inv-card').value = '';
+  document.getElementById('inv-worker-pick').value = '';
+  document.getElementById('inv-item').value = '';
+  document.getElementById('inv-qty').value = '';
+  document.getElementById('inv-notes').value = '';
+  if (workerMode === 'tap') document.getElementById('inv-card').focus();
+  renderLog();
+});
+
+// ----- RECENT -----
+function renderRecent() {
+  var listEl = document.getElementById('recent-list');
+  var sorted = state.transactions.slice().sort(function(a, b) { return b.ts - a.ts; }).slice(0, 30);
+  if (sorted.length === 0) {
+    listEl.innerHTML = '<div class="empty">No transactions yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>When</th><th>Action</th><th>Worker</th><th>Customer</th><th>Item</th><th>Qty</th><th>Notes</th></tr></thead><tbody>';
+  for (var i = 0; i < sorted.length; i++) {
+    var t = sorted[i];
+    html += '<tr>' +
+      '<td>' + fmtDateTime(t.ts) + '</td>' +
+      '<td><span class="badge ' + t.action + '">' + (t.action === 'in' ? 'IN' : 'OUT') + '</span></td>' +
+      '<td>' + escapeHtml(t.workerName) + '</td>' +
+      '<td>' + escapeHtml(t.customer) + '</td>' +
+      '<td>' + escapeHtml(t.item) + '</td>' +
+      '<td>' + escapeHtml(String(t.quantity)) + '</td>' +
+      '<td>' + escapeHtml(t.notes || '') + '</td>' +
+    '</tr>';
+  }
+  html += '</tbody></table>';
+  listEl.innerHTML = html;
+}
+
+// ----- ADMIN -----
+function renderAdmin() {
+  if (!adminUnlocked) {
+    document.getElementById('admin-lock').style.display = '';
+    document.getElementById('admin-content').style.display = 'none';
+    setTimeout(function() {
+      var el = document.getElementById('admin-pin-input');
+      if (el) el.focus();
+    }, 100);
+    return;
+  }
+  document.getElementById('admin-lock').style.display = 'none';
+  document.getElementById('admin-content').style.display = '';
+
+  // Clear PIN fields
+  var pinFields = ['pin-current', 'pin-new', 'pin-confirm', 'admin-pin-input'];
+  for (var p = 0; p < pinFields.length; p++) {
+    var el = document.getElementById(pinFields[p]);
+    if (el && document.activeElement !== el) el.value = '';
+  }
+
+  // Sync UI
+  var urlInput = document.getElementById('sync-url');
+  if (urlInput && document.activeElement !== urlInput) urlInput.value = syncUrl;
+  var autoCheck = document.getElementById('sync-auto');
+  if (autoCheck) autoCheck.checked = syncAuto;
+  updateSyncStatus();
+
+  // Workers
+  var wt = document.querySelector('#workers-table tbody');
+  if (state.workers.length === 0) {
+    wt.innerHTML = '<tr><td colspan="3" class="empty">No workers yet.</td></tr>';
+  } else {
+    var whtml = '';
+    for (var i = 0; i < state.workers.length; i++) {
+      var w = state.workers[i];
+      whtml += '<tr><td>' + escapeHtml(w.name) + '</td><td><code>' + escapeHtml(w.cardId) + '</code></td><td><button data-remove-worker="' + w.id + '">Remove</button></td></tr>';
+    }
+    wt.innerHTML = whtml;
+  }
+
+  // Customers
+  var ct = document.querySelector('#customers-table tbody');
+  if (state.customers.length === 0) {
+    ct.innerHTML = '<tr><td colspan="2" class="empty">No customers yet.</td></tr>';
+  } else {
+    var chtml = '';
+    for (var j = 0; j < state.customers.length; j++) {
+      var c = state.customers[j];
+      chtml += '<tr><td>' + escapeHtml(c.name) + '</td><td><button data-remove-customer="' + c.id + '">Remove</button></td></tr>';
+    }
+    ct.innerHTML = chtml;
+  }
+}
+
+function updateSyncStatus() {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  if (!syncUrl) { el.textContent = 'Not configured'; return; }
+  if (!lastSyncIso) { el.textContent = 'Configured · not yet synced'; return; }
+  el.textContent = 'Last sync: ' + new Date(lastSyncIso).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// PIN
+function tryUnlock() {
+  var inp = document.getElementById('admin-pin-input');
+  var entered = inp.value.trim();
+  if (!entered) { toast('Enter PIN', 'err'); return; }
+  if (entered === state.config.adminPin) {
+    adminUnlocked = true; inp.value = '';
+    toast('Admin unlocked', 'success'); renderAdmin();
+  } else {
+    inp.value = ''; toast('Wrong PIN', 'err');
+  }
+}
+document.getElementById('admin-pin-submit').addEventListener('click', tryUnlock);
+document.getElementById('admin-pin-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.keyCode === 13) tryUnlock();
+});
+document.getElementById('pin-change').addEventListener('click', function() {
+  var current = document.getElementById('pin-current').value.trim();
+  var next = document.getElementById('pin-new').value.trim();
+  var confirmPin = document.getElementById('pin-confirm').value.trim();
+  if (current !== state.config.adminPin) { toast('Current PIN is wrong', 'err'); return; }
+  if (next.length < 4) { toast('New PIN must be at least 4 digits', 'err'); return; }
+  if (next !== confirmPin) { toast('PINs do not match', 'err'); return; }
+  state.config.adminPin = next;
+  saveState();
+  document.getElementById('pin-current').value = '';
+  document.getElementById('pin-new').value = '';
+  document.getElementById('pin-confirm').value = '';
+  toast('PIN changed', 'success');
+});
+document.getElementById('pin-lock-now').addEventListener('click', function() {
+  adminUnlocked = false; renderAdmin();
+  toast('Admin locked');
+});
+
+// Add worker / customer
+document.getElementById('add-worker').addEventListener('click', function() {
+  var name = document.getElementById('new-worker-name').value.trim();
+  var card = document.getElementById('new-worker-card').value.trim();
+  if (!name || !card) { toast('Need name and card', 'err'); return; }
+  for (var i = 0; i < state.workers.length; i++) {
+    if (state.workers[i].cardId === card) { toast('Card already used', 'err'); return; }
+  }
+  state.workers.push({ id: uid(), name: name, cardId: card });
+  document.getElementById('new-worker-name').value = '';
+  document.getElementById('new-worker-card').value = '';
+  saveState(); renderAdmin();
+});
+document.getElementById('add-customer').addEventListener('click', function() {
+  var name = document.getElementById('new-customer-name').value.trim();
+  if (!name) return;
+  state.customers.push({ id: uid(), name: name });
+  document.getElementById('new-customer-name').value = '';
+  saveState(); renderAdmin();
+});
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var rw = t.getAttribute('data-remove-worker');
+  var rc = t.getAttribute('data-remove-customer');
+  if (rw) {
+    if (!confirm('Remove this worker?')) return;
+    state.workers = state.workers.filter(function(w) { return w.id !== rw; });
+    saveState(); renderAdmin();
+  } else if (rc) {
+    if (!confirm('Remove this customer?')) return;
+    state.customers = state.customers.filter(function(c) { return c.id !== rc; });
+    saveState(); renderAdmin();
+  }
+});
+
+// Sync
+function txnToRow(t) {
+  return {
+    txn_id: t.id,
+    timestamp: new Date(t.ts).toISOString(),
+    txn_action: t.action,
+    worker_name: t.workerName,
+    card_id: t.cardId,
+    customer: t.customer,
+    item: t.item,
+    quantity: t.quantity,
+    notes: t.notes || ''
+  };
+}
+function syncToCloud(txnsToSend, silent, callback) {
+  if (!syncUrl) {
+    if (!silent) toast('No sync URL configured', 'err');
+    if (callback) callback(false);
+    return;
+  }
+  if (!txnsToSend) txnsToSend = state.transactions;
+  if (txnsToSend.length === 0) {
+    if (!silent) toast('Nothing to sync', 'warn');
+    if (callback) callback(true);
+    return;
+  }
+  var rows = [];
+  for (var i = 0; i < txnsToSend.length; i++) rows.push(txnToRow(txnsToSend[i]));
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', syncUrl, true);
+  xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+  xhr.onload = function() {
+    var ok = false;
+    try { var r = JSON.parse(xhr.responseText); ok = r && r.ok === true; } catch (e) {}
+    if (ok) {
+      lastSyncIso = new Date().toISOString();
+      try { localStorage.setItem(SYNC_STATUS_KEY, lastSyncIso); } catch (e) {}
+      if (!silent) toast('Synced ' + txnsToSend.length, 'success');
+      updateSyncStatus();
+      if (callback) callback(true);
+    } else {
+      if (!silent) toast('Sync failed: ' + (xhr.responseText || 'unknown'), 'err');
+      if (callback) callback(false);
+    }
+  };
+  xhr.onerror = function() {
+    if (!silent) toast('Network error', 'err');
+    if (callback) callback(false);
+  };
+  try { xhr.send(JSON.stringify({ action: 'sync', transactions: rows })); }
+  catch (e) { if (!silent) toast('Send failed: ' + e.message, 'err'); }
+}
+function testSync() {
+  if (!syncUrl) { toast('Save URL first', 'err'); return; }
+  toast('Testing...', 'success');
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', syncUrl, true);
+  xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+  xhr.onload = function() {
+    try {
+      var r = JSON.parse(xhr.responseText);
+      if (r && r.ok) toast('Connected!', 'success');
+      else toast('Error: ' + (r.error || 'unknown'), 'err');
+    } catch (e) { toast('Bad response', 'err'); }
+  };
+  xhr.onerror = function() { toast('Could not reach URL', 'err'); };
+  xhr.send(JSON.stringify({ action: 'ping' }));
+}
+
+document.getElementById('sync-save').addEventListener('click', function() {
+  syncUrl = document.getElementById('sync-url').value.trim();
+  saveSync(); updateSyncStatus();
+  toast('URL saved', 'success');
+});
+document.getElementById('sync-test').addEventListener('click', function() {
+  syncUrl = document.getElementById('sync-url').value.trim();
+  saveSync(); testSync();
+});
+document.getElementById('sync-now').addEventListener('click', function() { syncToCloud(null, false); });
+document.getElementById('sync-auto').addEventListener('change', function(e) {
+  syncAuto = e.target.checked; saveSync();
+  toast(syncAuto ? 'Auto-sync on' : 'Auto-sync off');
+});
+
+// Data
+function showOutput(text) {
+  var el = document.getElementById('export-output');
+  el.textContent = text;
+  el.style.display = '';
+  toast('Tap and hold to select all', 'success');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+document.getElementById('export-csv').addEventListener('click', function() {
+  var rows = [['txn_id','timestamp','action','worker','card','customer','item','quantity','notes']];
+  for (var i = 0; i < state.transactions.length; i++) {
+    var t = state.transactions[i];
+    rows.push([
+      t.id, new Date(t.ts).toISOString(),
+      t.action, t.workerName, t.cardId,
+      t.customer, t.item, t.quantity, t.notes || ''
+    ]);
+  }
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+  showOutput(csv);
+});
+document.getElementById('export-backup').addEventListener('click', function() {
+  showOutput(JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), state: state }, null, 2));
+});
+document.getElementById('import-backup').addEventListener('click', function() {
+  document.getElementById('import-area').style.display = '';
+  document.getElementById('import-text').focus();
+});
+document.getElementById('import-cancel').addEventListener('click', function() {
+  document.getElementById('import-area').style.display = 'none';
+  document.getElementById('import-text').value = '';
+});
+document.getElementById('import-apply').addEventListener('click', function() {
+  var text = document.getElementById('import-text').value.trim();
+  if (!text) { toast('Paste JSON first', 'err'); return; }
+  try {
+    var data = JSON.parse(text);
+    if (!data.state || !data.state.transactions) throw new Error('Invalid backup');
+    if (!confirm('Replace ALL data?')) return;
+    state = data.state;
+    saveState(); renderAdmin();
+    document.getElementById('import-area').style.display = 'none';
+    document.getElementById('import-text').value = '';
+    toast('Backup restored', 'success');
+  } catch (err) { toast('Invalid JSON', 'err'); }
+});
+
+document.getElementById('seed-demo').addEventListener('click', function() {
+  if (state.workers.length || state.customers.length) {
+    if (!confirm('Add demo data on top?')) return;
+  }
+  var workers = [
+    { name: 'Alex Kim', cardId: '0004471892' },
+    { name: 'Maya Rodriguez', cardId: '0008820134' },
+    { name: 'Sam Chen', cardId: '0001209855' }
+  ];
+  for (var i = 0; i < workers.length; i++) state.workers.push({ id: uid(), name: workers[i].name, cardId: workers[i].cardId });
+  var customers = ['Acme Industries', 'Brightline Co.', 'Internal use', 'Stellar Robotics'];
+  for (var j = 0; j < customers.length; j++) state.customers.push({ id: uid(), name: customers[j] });
+
+  var items = ['Steel rod 6mm', 'M8 bolt box', 'Blue paint qt', 'Welding rod', 'Sandpaper 220'];
+  for (var k = 0; k < 8; k++) {
+    state.transactions.push({
+      id: uid(),
+      ts: now() - Math.random() * 3 * 24 * 3600 * 1000,
+      action: Math.random() > 0.3 ? 'out' : 'in',
+      workerId: state.workers[Math.floor(Math.random() * state.workers.length)].id,
+      workerName: state.workers[Math.floor(Math.random() * state.workers.length)].name,
+      cardId: state.workers[Math.floor(Math.random() * state.workers.length)].cardId,
+      customerId: state.customers[Math.floor(Math.random() * state.customers.length)].id,
+      customer: state.customers[Math.floor(Math.random() * state.customers.length)].name,
+      item: items[Math.floor(Math.random() * items.length)],
+      quantity: (Math.floor(Math.random() * 20) + 1).toString(),
+      notes: ''
+    });
+  }
+  saveState(); renderCurrentView();
+  toast('Demo data loaded', 'success');
+});
+
+document.getElementById('reset-data').addEventListener('click', function() {
+  if (!confirm('Delete ALL data?')) return;
+  if (!confirm('Are you sure? Cannot be undone.')) return;
+  state = { workers: [], customers: [], transactions: [], config: { adminPin: state.config.adminPin || DEFAULT_PIN } };
+  saveState(); renderCurrentView();
+  toast('Cleared');
+});
+
+// Render
+function renderCurrentView() {
+  renderClock();
+  if (currentView === 'log') renderLog();
+  else if (currentView === 'recent') renderRecent();
+  else if (currentView === 'admin') renderAdmin();
+}
+
+(function init() {
+  loadState();
+  renderCurrentView();
+  setInterval(renderClock, 30000);
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) renderCurrentView();
+  });
+})();
+</script>
+</body>
+</html>
